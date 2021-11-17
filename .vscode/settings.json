@@ -1,0 +1,7 @@
+{
+  "editor.formatOnSave": true,
+  "files.removeFinalNewlines": true,
+  "rust-analyzer.diagnostics.disabled": [
+    "macro-error"
+  ],
+}
