@@ -1,5 +1,6 @@
 use inflector::Inflector;
 use proc_macro2::TokenStream;
+use proc_macro_error::abort;
 use quote::{quote, ToTokens};
 use syn::{parse_str, Attribute, Block, Ident, ItemFn, LitStr, ReturnType, Visibility};
 
@@ -26,6 +27,13 @@ impl Fncmd {
 		item: &ItemFn,
 		subcmds: FncmdSubcmds,
 	) -> Fncmd {
+		if item.sig.ident.to_string() != "main" {
+			abort!(
+				item.sig.ident.span(),
+				"`#[fncmd]` macro can only be attached to the `main` function"
+			);
+		}
+
 		let fn_attrs = item.attrs.iter();
 		let fn_vis = &item.vis;
 		let fn_args = item.sig.inputs.iter();
