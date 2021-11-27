@@ -1,4 +1,4 @@
-#![feature(proc_macro_span, bool_to_option)]
+#![feature(proc_macro_span)]
 
 use std::collections::HashMap;
 use std::fs::File;
@@ -39,7 +39,7 @@ pub fn fncmd(attr: TokenStream, item: TokenStream) -> TokenStream {
 	let bin_targets = package
 		.targets
 		.iter()
-		.filter_map(|target| target.kind.contains(&"bin".into()).then_some(target))
+		.filter_map(|target| target.kind.contains(&"bin".into()).then(|| target))
 		.collect::<Vec<_>>();
 	let self_version = package.version.to_string();
 
@@ -95,7 +95,7 @@ pub fn fncmd(attr: TokenStream, item: TokenStream) -> TokenStream {
 			bin_target
 				.src_path
 				.ends_with(self_src_path.to_str().unwrap())
-				.then_some(bin_target.name.clone())
+				.then(|| bin_target.name.clone())
 		})
 		.unwrap();
 	let subcmds = subcmds.filter_by(&self_bin_name);
