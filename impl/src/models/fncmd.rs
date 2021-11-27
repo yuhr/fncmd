@@ -27,7 +27,7 @@ impl Fncmd {
 		item: &ItemFn,
 		subcmds: FncmdSubcmds,
 	) -> Fncmd {
-		if item.sig.ident.to_string() != "main" {
+		if item.sig.ident != "main" {
 			abort!(
 				item.sig.ident.span(),
 				"`#[fncmd]` macro can only be attached to the `main` function"
