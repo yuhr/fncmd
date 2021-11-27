@@ -20,8 +20,7 @@ impl From<()> for Result {
 impl<E: 'static + StdError> From<Result> for StdResult<(), E> {
 	#[inline]
 	fn from(from: Result) -> Self {
-		from.0
-			.map_err(|error| Box::<E>::into_inner(error.downcast().unwrap()))
+		from.0.map_err(|error| *error.downcast().unwrap())
 	}
 }
 

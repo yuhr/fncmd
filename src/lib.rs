@@ -1,5 +1,4 @@
 #![doc = include_str!("../README.md")]
-#![feature(box_into_inner)]
 
 pub use fncmd_impl::fncmd;
 
