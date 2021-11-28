@@ -178,7 +178,7 @@ impl ToTokens for Fncmd {
 		};
 
 		let code = quote! {
-		  use fncmd::clap;
+			use fncmd::clap;
 			#(#subcmd_imports)*
 
 			#[doc(hidden)]
