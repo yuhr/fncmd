@@ -1,0 +1,6 @@
+#!/bin/sh
+
+for FILE in `git diff --cached --name-only`; do
+  perl -pi -e 'chomp if eof' $FILE
+  git add $FILE
+done
