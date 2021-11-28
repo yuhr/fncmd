@@ -30,7 +30,7 @@ Or you can manually edit `Cargo.toml`:
 
 ```toml
 [dependencies]
-fncmd = "1.0.0"
+fncmd = "1.0.1"
 ```
 
 ## Basics
