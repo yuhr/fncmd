@@ -3,8 +3,8 @@
 <p>Command line interface as a function.</p>
 <h1>fncmd</h1>
 
-![Crates.io](https://img.shields.io/crates/v/fncmd)
-![Crates.io](https://img.shields.io/crates/l/fncmd)
+[![Crates.io](https://img.shields.io/crates/v/fncmd)](https://crates.io/crates/fncmd)
+[![License](https://img.shields.io/github/license/yuhr/fncmd)](https://github.com/yuhr/fncmd/blob/develop/LICENSE)
 
 <br><br></div>
 
