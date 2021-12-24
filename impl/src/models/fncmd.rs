@@ -17,6 +17,7 @@ pub struct Fncmd {
 	pub visibility: Visibility,
 	pub subcmds: FncmdSubcmds,
 	pub version: String,
+	pub asyncness: Option<syn::token::Async>,
 }
 
 impl Fncmd {
@@ -39,6 +40,7 @@ impl Fncmd {
 		let fn_args = item.sig.inputs.iter();
 		let fn_ret = &item.sig.output;
 		let fn_body = &item.block;
+		let asyncness = &item.sig.asyncness;
 
 		let mut fn_doc = None;
 		let mut fncmd_attrs: Vec<Attribute> = Vec::new();
@@ -63,6 +65,7 @@ impl Fncmd {
 			visibility: fn_vis.clone(),
 			subcmds,
 			version: self_version,
+			asyncness: asyncness.clone(),
 		}
 	}
 }
@@ -85,13 +88,14 @@ impl ToTokens for Fncmd {
 			visibility,
 			subcmds,
 			version,
+			asyncness,
 			..
 		} = self;
 
 		let doc = quote!(#documentation);
 
 		let vars: Vec<TokenStream> = args
-			.into_iter()
+			.iter()
 			.map(|arg| {
 				let name = &arg.name;
 				let mutability = &arg.mutability;
@@ -183,7 +187,6 @@ impl ToTokens for Fncmd {
 
 			#[doc(hidden)]
 			#[allow(non_camel_case_types)]
-			#(#attrs)*
 			#doc
 			#[derive(fncmd::clap::Parser)]
 			#[clap(name = #cmd_name, version = #version)]
@@ -203,7 +206,8 @@ impl ToTokens for Fncmd {
 				__fncmd_exec_impl(__fncmd_options).into()
 			}
 
-			fn main() #return_type {
+			#(#attrs)*
+			#asyncness fn main() #return_type {
 				__fncmd_exec(None).into()
 			}
 		};
