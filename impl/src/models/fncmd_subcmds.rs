@@ -3,7 +3,7 @@ use std::{collections::HashMap, path::PathBuf};
 pub struct FncmdSubcmds(pub HashMap<String, (bool, PathBuf)>);
 
 impl FncmdSubcmds {
-	pub fn filter_by(mut self, self_cmd_name: &String) -> Self {
+	pub fn filter_by(mut self, self_cmd_name: &str) -> Self {
 		// Remove all targets that are not prefixed with the self
 		// (This step also removes the self command itself)
 		self.0.retain(|name, _| is_subcommand(name, self_cmd_name));
@@ -25,7 +25,7 @@ impl FncmdSubcmds {
 }
 
 /// Check if `it` is a subcommand of `of`.
-fn is_subcommand(it: &String, of: &String) -> bool {
+fn is_subcommand(it: &str, of: &str) -> bool {
 	it.len() > of.len() && it.starts_with(of)
 }
 

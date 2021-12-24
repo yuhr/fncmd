@@ -70,7 +70,7 @@ impl FncmdArg {
 				documentation: doc,
 				attributes: attrs,
 				ty: arg.ty.as_ref().clone(),
-				mutability: pat_ident.mutability.clone(),
+				mutability: pat_ident.mutability,
 			}
 		} else {
 			abort!(

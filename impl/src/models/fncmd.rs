@@ -65,7 +65,7 @@ impl Fncmd {
 			visibility: fn_vis.clone(),
 			subcmds,
 			version: self_version,
-			asyncness: asyncness.clone(),
+			asyncness: *asyncness,
 		}
 	}
 }
