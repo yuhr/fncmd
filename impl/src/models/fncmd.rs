@@ -197,7 +197,7 @@ impl ToTokens for Fncmd {
 
 			#subcmd_enum
 
-			fn __fncmd_exec_impl(__fncmd_options: Option<__fncmd_options>) #return_type {
+			#asyncness fn __fncmd_exec_impl(__fncmd_options: Option<__fncmd_options>) #return_type {
 				#exec_impl
 			}
 
