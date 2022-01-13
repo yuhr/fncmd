@@ -18,14 +18,15 @@ pub struct Fncmd {
 	pub subcmds: FncmdSubcmds,
 	pub version: String,
 	pub asyncness: Option<syn::token::Async>,
+	pub item: ItemFn,
 }
 
 impl Fncmd {
 	pub fn parse(
 		self_name: String,
 		self_version: String,
-		_: FncmdAttr,
-		item: &ItemFn,
+		config: FncmdAttr,
+		item: ItemFn,
 		subcmds: FncmdSubcmds,
 	) -> Fncmd {
 		if item.sig.ident != "main" {
@@ -37,7 +38,8 @@ impl Fncmd {
 
 		let fn_attrs = item.attrs.iter();
 		let fn_vis = &item.vis;
-		let fn_args = item.sig.inputs.iter();
+		let config_args = config.args();
+		let fn_args = config_args.as_ref().unwrap_or(&item.sig.inputs).iter();
 		let fn_ret = &item.sig.output;
 		let fn_body = &item.block;
 		let asyncness = &item.sig.asyncness;
@@ -66,6 +68,7 @@ impl Fncmd {
 			subcmds,
 			version: self_version,
 			asyncness: *asyncness,
+			item,
 		}
 	}
 }
@@ -89,8 +92,26 @@ impl ToTokens for Fncmd {
 			subcmds,
 			version,
 			asyncness,
-			..
+			item,
 		} = self;
+
+		// Save original code into the internal field of the attribute macro, in
+		// order to avoid incompatibility with exotic attributes such as
+		// `#[tokio::main]`. This workaround is needed because Rust requires
+		// procedural macros to produce legal Rust code *for each* macroexpansion,
+		// but `main` function with parameters is not legal.
+		if 0 < attrs.len() {
+			let __item_fn = quote!(#item).to_string();
+			let code = quote! {
+				#(#attrs)*
+				#[fncmd(__item_fn=#__item_fn)]
+				#visibility #asyncness fn main() #return_type {
+					#body
+				}
+			};
+			code.to_tokens(tokens);
+			return;
+		}
 
 		let doc = quote!(#documentation);
 
@@ -206,8 +227,7 @@ impl ToTokens for Fncmd {
 				__fncmd_exec_impl(__fncmd_options).into()
 			}
 
-			#(#attrs)*
-			#asyncness fn main() #return_type {
+			fn main() #return_type {
 				__fncmd_exec(None).into()
 			}
 		};

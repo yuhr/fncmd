@@ -103,5 +103,5 @@ pub fn fncmd(attr: TokenStream, item: TokenStream) -> TokenStream {
 	let attr = parse_macro_input!(attr as AttributeArgs);
 	let attr = FncmdAttr::from_list(&attr).unwrap();
 	let item = parse_macro_input!(item as ItemFn);
-	Fncmd::parse(self_bin_name, self_version, attr, &item, subcmds).into()
+	Fncmd::parse(self_bin_name, self_version, attr, item, subcmds).into()
 }
