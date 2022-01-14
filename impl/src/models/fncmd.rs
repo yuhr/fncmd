@@ -142,7 +142,7 @@ impl ToTokens for Fncmd {
 					#enumitem_name(#mod_name::__fncmd_options)
 				};
 				let case = quote! {
-					__fncmd_subcmds::#enumitem_name(__fncmd_options) => {
+					Some(__fncmd_subcmds::#enumitem_name(__fncmd_options)) => {
 						#mod_name::__fncmd_exec(Some(__fncmd_options)).into()
 					}
 				};
@@ -155,7 +155,7 @@ impl ToTokens for Fncmd {
 		let subcmd_field = if !subcmd_enumitems.is_empty() {
 			quote! {
 				#[clap(subcommand)]
-				__fncmd_subcmds: __fncmd_subcmds,
+				__fncmd_subcmds: Option<__fncmd_subcmds>,
 			}
 		} else {
 			quote! {}
