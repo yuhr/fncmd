@@ -1,7 +1,3 @@
-pub struct Termination(i32);
-
-impl<T: std::process::Termination> From<T> for Termination {
-	fn from(t: T) -> Self {
-		Termination(t.report())
-	}
-}
+/// Without this alias, users have to manually enable
+/// `#![feature(termination_trait_lib)]`
+pub trait Termination = std::process::Termination;

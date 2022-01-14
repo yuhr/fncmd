@@ -189,7 +189,8 @@ impl ToTokens for Fncmd {
 				match __fncmd_options.__fncmd_subcmds {
 					#(#subcmd_cases)*
 					_ => {
-						__fncmd_exec_impl(__fncmd_options).into()
+						use fncmd::IntoExitCode;
+						__fncmd_exec_impl(__fncmd_options).into_exit_code()
 					}
 				}
 			}
@@ -199,7 +200,8 @@ impl ToTokens for Fncmd {
 					use fncmd::clap::Parser;
 					__fncmd_options::parse()
 				});
-				__fncmd_exec_impl(__fncmd_options).into()
+				use fncmd::IntoExitCode;
+				__fncmd_exec_impl(__fncmd_options).into_exit_code()
 			}
 		};
 
@@ -224,12 +226,12 @@ impl ToTokens for Fncmd {
 			}
 
 			#[inline]
-			#visibility fn __fncmd_exec(__fncmd_options: Option<__fncmd_options>) -> fncmd::Termination {
+			#visibility fn __fncmd_exec(__fncmd_options: Option<__fncmd_options>) -> fncmd::ExitCode {
 				#exec_body
 			}
 
-			fn main() {
-				__fncmd_exec(None);
+			fn main() -> impl fncmd::Termination {
+				__fncmd_exec(None)
 			}
 		};
 
