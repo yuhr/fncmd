@@ -12,8 +12,8 @@ edition = "2021"
 exclude = [".*", "rust-toolchain", "rustfmt.toml", "release.toml"]
 
 [dependencies]
-clap = { version = "3.0.7", features = ["derive", "cargo"] }
-fncmd-impl = { path = "impl", version = "1.0.2" }
+clap = { version = "3.0.7", features = ["derive"] }
+fncmd-impl = { path = "impl", version = "=1.0.2" }
 
 [workspace]
 members = ["impl"]
