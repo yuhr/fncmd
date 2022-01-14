@@ -143,7 +143,7 @@ impl ToTokens for Fncmd {
 				};
 				let case = quote! {
 					__fncmd_subcmds::#enumitem_name(__fncmd_options) => {
-						#mod_name::__fncmd_exec(Some(__fncmd_options)).into()
+					  #mod_name::__fncmd_exec(Some(__fncmd_options)).into()
 					}
 				};
 				(import, (enumitem, case))
@@ -172,33 +172,34 @@ impl ToTokens for Fncmd {
 			quote! {}
 		};
 
-		let exec_impl = if !subcmd_cases.is_empty() {
+		let exec_impl_body = quote! {
+			let __fncmd_options {
+				#(#vars,)*
+				..
+			} = __fncmd_options;
+			#body
+		};
+
+		let exec_body = if !subcmd_cases.is_empty() {
 			quote! {
-				let __fncmd_options {
-					#(#vars,)*
-					__fncmd_subcmds,
-					..
-				} = __fncmd_options.unwrap_or_else(|| {
+				let __fncmd_options = __fncmd_options.unwrap_or_else(|| {
 					use fncmd::clap::Parser;
 					__fncmd_options::parse()
 				});
-				match __fncmd_subcmds {
+				match __fncmd_options.__fncmd_subcmds {
 					#(#subcmd_cases)*
 					_ => {
-						#body
+						__fncmd_exec_impl(__fncmd_options).into()
 					}
 				}
 			}
 		} else {
 			quote! {
-				let __fncmd_options {
-					#(#vars,)*
-					..
-				} = __fncmd_options.unwrap_or_else(|| {
+				let __fncmd_options = __fncmd_options.unwrap_or_else(|| {
 					use fncmd::clap::Parser;
 					__fncmd_options::parse()
 				});
-				#body
+				__fncmd_exec_impl(__fncmd_options).into()
 			}
 		};
 
@@ -218,17 +219,17 @@ impl ToTokens for Fncmd {
 
 			#subcmd_enum
 
-			#asyncness fn __fncmd_exec_impl(__fncmd_options: Option<__fncmd_options>) #return_type {
-				#exec_impl
+			#asyncness fn __fncmd_exec_impl(__fncmd_options: __fncmd_options) #return_type {
+				#exec_impl_body
 			}
 
 			#[inline]
-			#visibility fn __fncmd_exec(__fncmd_options: Option<__fncmd_options>) -> fncmd::Result {
-				__fncmd_exec_impl(__fncmd_options).into()
+			#visibility fn __fncmd_exec(__fncmd_options: Option<__fncmd_options>) -> fncmd::Termination {
+				#exec_body
 			}
 
-			fn main() #return_type {
-				__fncmd_exec(None).into()
+			fn main() {
+				__fncmd_exec(None);
 			}
 		};
 
