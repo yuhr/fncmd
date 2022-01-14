@@ -100,7 +100,7 @@ impl ToTokens for Fncmd {
 		// `#[tokio::main]`. This workaround is needed because Rust requires
 		// procedural macros to produce legal Rust code *for each* macroexpansion,
 		// but `main` function with parameters is not legal.
-		if 0 < attrs.len() {
+		if !attrs.is_empty() {
 			let __item_fn = quote!(#item).to_string();
 			let code = quote! {
 				#(#attrs)*
