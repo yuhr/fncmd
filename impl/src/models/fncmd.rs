@@ -143,7 +143,7 @@ impl ToTokens for Fncmd {
 				};
 				let case = quote! {
 					__fncmd_subcmds::#enumitem_name(__fncmd_options) => {
-					  #mod_name::__fncmd_exec(Some(__fncmd_options)).into()
+						#mod_name::__fncmd_exec(Some(__fncmd_options)).into()
 					}
 				};
 				(import, (enumitem, case))
