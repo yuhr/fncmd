@@ -17,14 +17,16 @@ pub struct Fncmd {
 	pub visibility: Visibility,
 	pub subcmds: FncmdSubcmds,
 	pub version: String,
+	pub asyncness: Option<syn::token::Async>,
+	pub item: ItemFn,
 }
 
 impl Fncmd {
 	pub fn parse(
 		self_name: String,
 		self_version: String,
-		_: FncmdAttr,
-		item: &ItemFn,
+		config: FncmdAttr,
+		item: ItemFn,
 		subcmds: FncmdSubcmds,
 	) -> Fncmd {
 		if item.sig.ident != "main" {
@@ -36,9 +38,11 @@ impl Fncmd {
 
 		let fn_attrs = item.attrs.iter();
 		let fn_vis = &item.vis;
-		let fn_args = item.sig.inputs.iter();
+		let config_args = config.args();
+		let fn_args = config_args.as_ref().unwrap_or(&item.sig.inputs).iter();
 		let fn_ret = &item.sig.output;
 		let fn_body = &item.block;
+		let asyncness = &item.sig.asyncness;
 
 		let mut fn_doc = None;
 		let mut fncmd_attrs: Vec<Attribute> = Vec::new();
@@ -63,6 +67,8 @@ impl Fncmd {
 			visibility: fn_vis.clone(),
 			subcmds,
 			version: self_version,
+			asyncness: *asyncness,
+			item,
 		}
 	}
 }
@@ -85,13 +91,32 @@ impl ToTokens for Fncmd {
 			visibility,
 			subcmds,
 			version,
-			..
+			asyncness,
+			item,
 		} = self;
+
+		// Save original code into the internal field of the attribute macro, in
+		// order to avoid incompatibility with exotic attributes such as
+		// `#[tokio::main]`. This workaround is needed because Rust requires
+		// procedural macros to produce legal Rust code *for each* macroexpansion,
+		// but `main` function with parameters is not legal.
+		if !attrs.is_empty() {
+			let __item_fn = quote!(#item).to_string();
+			let code = quote! {
+				#(#attrs)*
+				#[fncmd(__item_fn=#__item_fn)]
+				#visibility #asyncness fn main() #return_type {
+					#body
+				}
+			};
+			code.to_tokens(tokens);
+			return;
+		}
 
 		let doc = quote!(#documentation);
 
 		let vars: Vec<TokenStream> = args
-			.into_iter()
+			.iter()
 			.map(|arg| {
 				let name = &arg.name;
 				let mutability = &arg.mutability;
@@ -147,33 +172,36 @@ impl ToTokens for Fncmd {
 			quote! {}
 		};
 
-		let exec_impl = if !subcmd_cases.is_empty() {
+		let exec_impl_body = quote! {
+			let __fncmd_options {
+				#(#vars,)*
+				..
+			} = __fncmd_options;
+			#body
+		};
+
+		let exec_body = if !subcmd_cases.is_empty() {
 			quote! {
-				let __fncmd_options {
-					#(#vars,)*
-					__fncmd_subcmds,
-					..
-				} = __fncmd_options.unwrap_or_else(|| {
+				let __fncmd_options = __fncmd_options.unwrap_or_else(|| {
 					use fncmd::clap::Parser;
 					__fncmd_options::parse()
 				});
-				match __fncmd_subcmds {
+				match __fncmd_options.__fncmd_subcmds {
 					#(#subcmd_cases)*
 					_ => {
-						#body
+						use fncmd::IntoExitCode;
+						__fncmd_exec_impl(__fncmd_options).into_exit_code()
 					}
 				}
 			}
 		} else {
 			quote! {
-				let __fncmd_options {
-					#(#vars,)*
-					..
-				} = __fncmd_options.unwrap_or_else(|| {
+				let __fncmd_options = __fncmd_options.unwrap_or_else(|| {
 					use fncmd::clap::Parser;
 					__fncmd_options::parse()
 				});
-				#body
+				use fncmd::IntoExitCode;
+				__fncmd_exec_impl(__fncmd_options).into_exit_code()
 			}
 		};
 
@@ -183,7 +211,6 @@ impl ToTokens for Fncmd {
 
 			#[doc(hidden)]
 			#[allow(non_camel_case_types)]
-			#(#attrs)*
 			#doc
 			#[derive(fncmd::clap::Parser)]
 			#[clap(name = #cmd_name, version = #version)]
@@ -194,17 +221,17 @@ impl ToTokens for Fncmd {
 
 			#subcmd_enum
 
-			fn __fncmd_exec_impl(__fncmd_options: Option<__fncmd_options>) #return_type {
-				#exec_impl
+			#asyncness fn __fncmd_exec_impl(__fncmd_options: __fncmd_options) #return_type {
+				#exec_impl_body
 			}
 
 			#[inline]
-			#visibility fn __fncmd_exec(__fncmd_options: Option<__fncmd_options>) -> fncmd::Result {
-				__fncmd_exec_impl(__fncmd_options).into()
+			#visibility fn __fncmd_exec(__fncmd_options: Option<__fncmd_options>) -> fncmd::ExitCode {
+				#exec_body
 			}
 
-			fn main() #return_type {
-				__fncmd_exec(None).into()
+			fn main() -> impl fncmd::Termination {
+				__fncmd_exec(None)
 			}
 		};
 

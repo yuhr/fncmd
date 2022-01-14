@@ -154,6 +154,30 @@ src
     └── another-orphan-sub.rs
 ```
 
+## Use with exotic attribute macros
+
+Sometimes you may want to transform the `main` function with another attribute macro such as `#[tokio::main]`. In such case you have to put `#[fncmd]` at the outmost level:
+
+```rs
+#[fncmd]
+#[tokio::main]
+pub async fn main(hello: String) -> anyhow::Result<()> {
+  ...
+}
+```
+
+But not:
+
+```rs
+#[tokio::main]
+#[fncmd]
+pub async fn main(hello: String) -> anyhow::Result<()> {
+  ...
+}
+```
+
+This is because Rust requires procedural macros to produce legal code *for each* macroexpansion. If you put `#[tokio::main]` before, then it outputs the code preserving the parameters as is, while `main` funtions with parameters are not legal in Rust. To workaround this, `#[fncmd]` detects other attributes (this is only possible when the others are present after `#[fncmd]`), and if any, remove the parameters temporarily and save them into an internal field for later use, so that the others expand into legal code.
+
 ## Restrictions
 
 `fncmd` won't support following features by design:
@@ -166,4 +190,6 @@ That's why `fncmd` states “opinionated”. Showing authors on the help will si
 
 ## Why nightly
 
-The way it automatically determines which targets are subcommands or not requires the `#[fncmd]` macro itself to know the name of the attached target, and thus the path of the file at which it has been called. This can be achieved by [`Span::source_file`](https://doc.rust-lang.org/proc_macro/struct.Span.html#method.source_file), which is behind an unstable feature flag `proc_macro_span` for now. This is the only thing that blocks us from going stable.
+The way it automatically determines which targets are subcommands or not requires the `#[fncmd]` macro itself to know the name of the attached target, and thus the path of the file at which it has been called. This can be achieved by [`Span::source_file`](https://doc.rust-lang.org/proc_macro/struct.Span.html#method.source_file), which is behind an unstable feature flag `proc_macro_span`.
+
+Additionally, in order to allow users to use different return types for subcommand functions, it uses [`std::process::Termination`](https://doc.rust-lang.org/std/process/trait.Termination.html) trait internally, which is behind `termination_trait_lib`.
