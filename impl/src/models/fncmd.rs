@@ -103,6 +103,7 @@ impl ToTokens for Fncmd {
 		if !attrs.is_empty() {
 			let __item_fn = quote!(#item).to_string();
 			let code = quote! {
+				#documentation
 				#(#attrs)*
 				#[fncmd(__item_fn=#__item_fn)]
 				#visibility #asyncness fn main() #return_type {
@@ -112,8 +113,6 @@ impl ToTokens for Fncmd {
 			code.to_tokens(tokens);
 			return;
 		}
-
-		let doc = quote!(#documentation);
 
 		let vars: Vec<TokenStream> = args
 			.iter()
@@ -211,7 +210,7 @@ impl ToTokens for Fncmd {
 
 			#[doc(hidden)]
 			#[allow(non_camel_case_types)]
-			#doc
+			#documentation
 			#[derive(fncmd::clap::Parser)]
 			#[clap(name = #cmd_name, version = #version)]
 			#visibility struct __fncmd_options {

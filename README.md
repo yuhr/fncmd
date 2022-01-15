@@ -159,6 +159,7 @@ src
 Sometimes you may want to transform the `main` function with another attribute macro such as `#[tokio::main]`. In such case you have to put `#[fncmd]` at the outmost level:
 
 ```rs
+/// Description of the command line tool
 #[fncmd]
 #[tokio::main]
 pub async fn main(hello: String) -> anyhow::Result<()> {
@@ -169,6 +170,7 @@ pub async fn main(hello: String) -> anyhow::Result<()> {
 But not:
 
 ```rs
+/// Description of the command line tool
 #[tokio::main]
 #[fncmd]
 pub async fn main(hello: String) -> anyhow::Result<()> {
@@ -177,6 +179,8 @@ pub async fn main(hello: String) -> anyhow::Result<()> {
 ```
 
 This is because Rust requires procedural macros to produce legal code *for each* macroexpansion. If you put `#[tokio::main]` before, then it outputs the code preserving the parameters as is, while `main` funtions with parameters are not legal in Rust. To workaround this, `#[fncmd]` detects other attributes (this is only possible when the others are present after `#[fncmd]`), and if any, remove the parameters temporarily and save them into an internal field for later use, so that the others expand into legal code.
+
+Position of the doc comment doesn't matter.
 
 ## Restrictions
 
