@@ -9,7 +9,7 @@ repository = "https://github.com/yuhr/fncmd"
 categories = ["command-line-interface"]
 keywords = ["cli", "macro", "clap"]
 edition = "2021"
-exclude = [".*", "rust-toolchain", "rustfmt.toml", "release.toml"]
+exclude = [".*", "rust-toolchain", "rustfmt.toml", "release.toml", "justfile"]
 
 [dependencies]
 clap = { version = "3.0.7", features = ["derive"] }
