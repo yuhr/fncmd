@@ -39,7 +39,13 @@ pub fn fncmd(attr: TokenStream, item: TokenStream) -> TokenStream {
 	let bin_targets = package
 		.targets
 		.iter()
-		.filter_map(|target| target.kind.contains(&"bin".into()).then(|| target))
+		.filter_map(|target| {
+			target
+				.kind
+				.iter()
+				.any(|k| k == "bin" || k == "example")
+				.then(|| target)
+		})
 		.collect::<Vec<_>>();
 	let self_version = package.version.to_string();
 
