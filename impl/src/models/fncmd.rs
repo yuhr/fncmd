@@ -135,6 +135,7 @@ impl ToTokens for Fncmd {
 					parse_str(&format!(r#""{}""#, path.to_str().unwrap())).unwrap();
 				let import = quote! {
 					#[path = #path_str]
+					#[allow(unused_attributes)]
 					mod #mod_name;
 				};
 				let enumitem = quote! {
