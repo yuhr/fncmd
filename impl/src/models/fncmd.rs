@@ -105,7 +105,7 @@ impl ToTokens for Fncmd {
 			quote! {
 				#documentation
 				#(#attrs)*
-				#[fncmd(__item_fn=#__item_fn)]
+				#[fncmd::fncmd(__item_fn=#__item_fn)]
 				#visibility #asyncness fn main() #return_type {
 					#body
 				}
