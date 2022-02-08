@@ -74,7 +74,11 @@ pub fn fncmd(attr: TokenStream, item: TokenStream) -> TokenStream {
 							&& function
 								.attrs
 								.iter()
-								.any(|attr| attr.path.is_ident("fncmd"))
+								.any(|attr| {
+									// `#[fncmd::fncmd]` or `#[fncmd]`
+									attr.path.segments.len() <= 2
+									&& attr.path.segments.iter().all(|segment| segment.ident == "fncmd")
+								})
 					})
 					// If none of them are valid, just skip the file
 					.map(|function| {
