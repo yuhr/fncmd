@@ -90,14 +90,11 @@ impl ToTokens for FncmdArg {
 			ty,
 			..
 		} = self;
-		let doc = quote! { #documentation };
-
-		let code = quote! {
+		quote! {
+			#documentation
 			#(#attributes)*
-			#doc
 			#name: #ty
-		};
-
-		code.to_tokens(tokens);
+		}
+		.to_tokens(tokens);
 	}
 }

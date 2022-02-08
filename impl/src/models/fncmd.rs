@@ -102,15 +102,15 @@ impl ToTokens for Fncmd {
 		// but `main` function with parameters is not legal.
 		if !attrs.is_empty() {
 			let __item_fn = quote!(#item).to_string();
-			let code = quote! {
+			quote! {
 				#documentation
 				#(#attrs)*
 				#[fncmd(__item_fn=#__item_fn)]
 				#visibility #asyncness fn main() #return_type {
 					#body
 				}
-			};
-			code.to_tokens(tokens);
+			}
+			.to_tokens(tokens);
 			return;
 		}
 
@@ -179,32 +179,32 @@ impl ToTokens for Fncmd {
 			#body
 		};
 
+		let parse = quote! {
+			use fncmd::clap::Parser;
+			__fncmd_options::parse()
+		};
+
+		let into_exit_code = quote! {
+			use fncmd::IntoExitCode;
+			__fncmd_exec_impl(__fncmd_options).into_exit_code()
+		};
+
 		let exec_body = if !subcmd_cases.is_empty() {
 			quote! {
-				let __fncmd_options = __fncmd_options.unwrap_or_else(|| {
-					use fncmd::clap::Parser;
-					__fncmd_options::parse()
-				});
+				let __fncmd_options = __fncmd_options.unwrap_or_else(|| { #parse });
 				match __fncmd_options.__fncmd_subcmds {
 					#(#subcmd_cases)*
-					_ => {
-						use fncmd::IntoExitCode;
-						__fncmd_exec_impl(__fncmd_options).into_exit_code()
-					}
+					_ => { #into_exit_code }
 				}
 			}
 		} else {
 			quote! {
-				let __fncmd_options = __fncmd_options.unwrap_or_else(|| {
-					use fncmd::clap::Parser;
-					__fncmd_options::parse()
-				});
-				use fncmd::IntoExitCode;
-				__fncmd_exec_impl(__fncmd_options).into_exit_code()
+				let __fncmd_options = __fncmd_options.unwrap_or_else(|| { #parse });
+				#into_exit_code
 			}
 		};
 
-		let code = quote! {
+		quote! {
 			use fncmd::clap;
 			#(#subcmd_imports)*
 
@@ -232,8 +232,7 @@ impl ToTokens for Fncmd {
 			fn main() -> impl fncmd::Termination {
 				__fncmd_exec(None)
 			}
-		};
-
-		code.to_tokens(tokens);
+		}
+		.to_tokens(tokens);
 	}
 }
