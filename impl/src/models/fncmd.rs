@@ -128,7 +128,7 @@ impl ToTokens for Fncmd {
 			.map(|(name, (_, path))| {
 				let subcmd_name = name.strip_prefix(cmd_name).unwrap();
 				let snake_case_name = subcmd_name.to_snake_case();
-				let enumitem_name: Ident = parse_str(&snake_case_name).unwrap();
+				let enumitem_name: Ident = parse_str(&format!("__{}", snake_case_name)).unwrap();
 				let mod_name: Ident =
 					parse_str(&format!("__fncmd_mod_{}", snake_case_name)).unwrap();
 				let path_str: LitStr =
