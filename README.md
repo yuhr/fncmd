@@ -12,7 +12,7 @@
 
 ## Motivation
 
-Imagine a command line program you want to create. Essentially, it can be abstracted as a simple function that takes command line options as arguments. Then there should be nothing to stop you from being able to write it _literally_ as a function, without using structs or builders like today's Rustaceans do.
+Imagine a command line program you want to create. Essentially, it can be abstracted as a simple function that takes command line options as arguments. Then there should be nothing to stop you from being able to write it *literally* as a function, without using structs or builders like today's Rustaceans do.
 
 This concept is tremendously inspired by [`argopt`](https://crates.io/crates/argopt), I really appreciate the work. However, it still requires a bit of cumbersome code, especially for handling subcommands. `fncmd` has been rewritten from scratch to get rid of all the complexities. Let's dig into [Subcommands](#subcommands) section to see how we can handle it.
 
@@ -39,10 +39,9 @@ This crate exposes just a single attribute macro, [`fncmd`], which can **only** 
 
 ```rust
 // main.rs
-use fncmd::fncmd;
 
 /// Description of the command line tool
-#[fncmd]
+#[fncmd::fncmd]
 pub fn main(
   /// Argument foo
   #[opt(short, long)]

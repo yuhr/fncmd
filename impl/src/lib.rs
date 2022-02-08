@@ -18,7 +18,7 @@ use models::*;
 ///
 /// ```rust
 /// /// Description of the command line tool
-/// #[fncmd]
+/// #[fncmd::fncmd]
 /// pub fn main(
 ///   /// Argument foo
 ///   #[opt(short, long)]
