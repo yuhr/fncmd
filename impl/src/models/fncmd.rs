@@ -121,8 +121,7 @@ impl ToTokens for Fncmd {
 				};
 				let case = quote! {
 					Some(__fncmd_subcmds::#enumitem_name(__fncmd_options)) => {
-						use fncmd::IntoExitCode;
-						#mod_name::__fncmd_exec(Some(__fncmd_options)).into_exit_code()
+						fncmd::IntoExitCode::into_exit_code(#mod_name::__fncmd_exec(Some(__fncmd_options)))
 					}
 				};
 				(import, (enumitem, case))
@@ -178,8 +177,7 @@ impl ToTokens for Fncmd {
 		};
 
 		let into_exit_code = quote! {
-			use fncmd::IntoExitCode;
-			__fncmd_exec_impl().into_exit_code()
+			fncmd::IntoExitCode::into_exit_code(__fncmd_exec_impl())
 		};
 
 		let exec_body = if !subcmd_cases.is_empty() {
