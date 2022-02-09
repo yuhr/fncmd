@@ -8,8 +8,11 @@ use cargo_metadata::MetadataCommand;
 use darling::FromMeta;
 use proc_macro::{Span, TokenStream};
 use proc_macro_error::proc_macro_error;
+use quote::quote;
+use syn::punctuated::Punctuated;
+use syn::token::Comma;
 use syn::visit::Visit;
-use syn::{parse_file, parse_macro_input, AttributeArgs, ItemFn};
+use syn::{parse_file, parse_macro_input, AttributeArgs, FnArg, ItemFn};
 
 mod models;
 use models::*;
@@ -30,8 +33,8 @@ use models::*;
 ///   println!("{:?} {:?}", foo, bar);
 /// }
 /// ```
-#[proc_macro_attribute]
 #[proc_macro_error]
+#[proc_macro_attribute]
 pub fn fncmd(attr: TokenStream, item: TokenStream) -> TokenStream {
 	// Get project metadata
 	let metadata = MetadataCommand::new().exec().unwrap();
@@ -114,4 +117,22 @@ pub fn fncmd(attr: TokenStream, item: TokenStream) -> TokenStream {
 	let attr = FncmdAttr::from_list(&attr).unwrap();
 	let item = parse_macro_input!(item as ItemFn);
 	Fncmd::parse(self_bin_name, self_version, attr, item, subcmds).into()
+}
+
+#[proc_macro_attribute]
+#[proc_macro_error]
+pub fn __inject_params(attr: TokenStream, item: TokenStream) -> TokenStream {
+	use darling::FromMeta;
+
+	#[derive(Debug, Default, FromMeta)]
+	#[darling(default)]
+	pub struct Attr {
+		__params: Punctuated<FnArg, Comma>,
+	}
+
+	let attr = parse_macro_input!(attr as AttributeArgs);
+	let attr = Attr::from_list(&attr).unwrap();
+
+	dbg!(attr);
+	quote!().into()
 }

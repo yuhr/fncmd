@@ -2,7 +2,9 @@ use inflector::Inflector;
 use proc_macro2::TokenStream;
 use proc_macro_error::abort;
 use quote::{quote, ToTokens};
-use syn::{parse_str, Attribute, Block, Ident, ItemFn, LitStr, ReturnType, Visibility};
+use syn::{
+	parse_str, spanned::Spanned, Attribute, Block, Ident, ItemFn, LitStr, ReturnType, Visibility,
+};
 
 use super::{FncmdArg, FncmdAttr, FncmdSubcmds};
 
@@ -18,14 +20,13 @@ pub struct Fncmd {
 	pub subcmds: FncmdSubcmds,
 	pub version: String,
 	pub asyncness: Option<syn::token::Async>,
-	pub item: ItemFn,
 }
 
 impl Fncmd {
 	pub fn parse(
 		self_name: String,
 		self_version: String,
-		config: FncmdAttr,
+		_: FncmdAttr,
 		item: ItemFn,
 		subcmds: FncmdSubcmds,
 	) -> Fncmd {
@@ -67,7 +68,6 @@ impl Fncmd {
 			subcmds,
 			version: self_version,
 			asyncness: *asyncness,
-			item,
 		}
 	}
 }
@@ -91,7 +91,6 @@ impl ToTokens for Fncmd {
 			subcmds,
 			version,
 			asyncness,
-			item,
 		} = self;
 
 		let vars: Vec<TokenStream> = args
@@ -122,7 +121,8 @@ impl ToTokens for Fncmd {
 				};
 				let case = quote! {
 					Some(__fncmd_subcmds::#enumitem_name(__fncmd_options)) => {
-						#mod_name::__fncmd_exec(Some(__fncmd_options)).into()
+						use fncmd::IntoExitCode;
+						#mod_name::__fncmd_exec(Some(__fncmd_options)).into_exit_code()
 					}
 				};
 				(import, (enumitem, case))
@@ -151,13 +151,17 @@ impl ToTokens for Fncmd {
 			quote! {}
 		};
 
+		if attrs.is_empty() && asyncness.is_some() {
+			abort!(
+				asyncness.span(),
+				"can't use async, unless used with some runtime such as `#[tokio::main]`"
+			)
+		}
+
 		let exec_impl_body = quote! {
-			let __fncmd_options {
-				#(#vars,)*
-				..
-			} = __fncmd_options;
 			#(#attrs)*
 			#asyncness fn main() #return_type {
+				let __fncmd_options { #(#vars,)* .. } = __fncmd_options_static.lock().unwrap().take().unwrap();
 				#body
 			}
 			main()
@@ -168,19 +172,30 @@ impl ToTokens for Fncmd {
 				use fncmd::clap::Parser;
 				__fncmd_options::parse()
 			});
+			let mut __fncmd_options_guard = __fncmd_options_static.lock().unwrap();
+			*__fncmd_options_guard = Some(__fncmd_options);
+			std::mem::drop(__fncmd_options_guard);
 		};
 
 		let into_exit_code = quote! {
 			use fncmd::IntoExitCode;
-			__fncmd_exec_impl(__fncmd_options).into_exit_code()
+			__fncmd_exec_impl().into_exit_code()
 		};
 
 		let exec_body = if !subcmd_cases.is_empty() {
 			quote! {
 				#parse
+				let mut __fncmd_options_guard = __fncmd_options_static.lock().unwrap();
+				let __fncmd_options = __fncmd_options_guard.take().unwrap();
+				std::mem::drop(__fncmd_options_guard);
 				match __fncmd_options.__fncmd_subcmds {
 					#(#subcmd_cases)*
-					_ => { #into_exit_code }
+					_ => {
+						let mut __fncmd_options_guard = __fncmd_options_static.lock().unwrap();
+						*__fncmd_options_guard = Some(__fncmd_options);
+						std::mem::drop(__fncmd_options_guard);
+						#into_exit_code
+					}
 				}
 			}
 		} else {
@@ -206,7 +221,10 @@ impl ToTokens for Fncmd {
 
 			#subcmd_enum
 
-			fn __fncmd_exec_impl(__fncmd_options: __fncmd_options) #return_type {
+			static __fncmd_options_static: fncmd::Lazy<std::sync::Mutex<Option<__fncmd_options>>> =
+				fncmd::Lazy::new(|| std::sync::Mutex::new(None));
+
+			fn __fncmd_exec_impl() #return_type {
 				#exec_impl_body
 			}
 
