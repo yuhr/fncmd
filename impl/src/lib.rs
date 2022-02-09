@@ -8,11 +8,8 @@ use cargo_metadata::MetadataCommand;
 use darling::FromMeta;
 use proc_macro::{Span, TokenStream};
 use proc_macro_error::proc_macro_error;
-use quote::quote;
-use syn::punctuated::Punctuated;
-use syn::token::Comma;
 use syn::visit::Visit;
-use syn::{parse_file, parse_macro_input, AttributeArgs, FnArg, ItemFn};
+use syn::{parse_file, parse_macro_input, AttributeArgs, ItemFn};
 
 mod models;
 use models::*;
