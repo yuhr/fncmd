@@ -3,9 +3,6 @@
 
 pub use fncmd_impl::fncmd;
 
-#[doc(hidden)]
-pub use fncmd_impl::__inject_params;
-
 mod exit_code;
 #[doc(hidden)]
 pub use exit_code::{ExitCode, IntoExitCode};

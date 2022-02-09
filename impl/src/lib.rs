@@ -118,21 +118,3 @@ pub fn fncmd(attr: TokenStream, item: TokenStream) -> TokenStream {
 	let item = parse_macro_input!(item as ItemFn);
 	Fncmd::parse(self_bin_name, self_version, attr, item, subcmds).into()
 }
-
-#[proc_macro_attribute]
-#[proc_macro_error]
-pub fn __inject_params(attr: TokenStream, item: TokenStream) -> TokenStream {
-	use darling::FromMeta;
-
-	#[derive(Debug, Default, FromMeta)]
-	#[darling(default)]
-	pub struct Attr {
-		__params: Punctuated<FnArg, Comma>,
-	}
-
-	let attr = parse_macro_input!(attr as AttributeArgs);
-	let attr = Attr::from_list(&attr).unwrap();
-
-	dbg!(attr);
-	quote!().into()
-}
