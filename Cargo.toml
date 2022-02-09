@@ -1,6 +1,6 @@
 [package]
 name = "fncmd"
-version = "1.2.2"
+version = "1.2.3"
 license = "MPL-2.0"
 authors = ["Yu Shimura <mail@yuhr.org>"]
 description = "Command line interface as a function."
@@ -13,7 +13,7 @@ exclude = [".*", "rust-toolchain", "rustfmt.toml", "release.toml", "justfile"]
 
 [dependencies]
 clap = { version = "3.0.7", features = ["derive"] }
-fncmd-impl = { path = "impl", version = "=1.2.2" }
+fncmd-impl = { path = "impl", version = "=1.2.3" }
 once_cell = "1.9.0"
 
 [workspace]
