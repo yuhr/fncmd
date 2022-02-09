@@ -155,7 +155,7 @@ src
 
 ## Use with exotic attribute macros
 
-Sometimes you may want to transform the `main` function with another attribute macro such as `#[tokio::main]`. In such case you have to put `#[fncmd]` at the outmost level:
+Sometimes you may want to transform the `main` function with another attribute macro such as `#[tokio::main]` and `#[async_std::main]`. In such case you have to put `#[fncmd]` at the outmost level:
 
 ```rs
 /// Description of the command line tool
@@ -177,7 +177,7 @@ pub async fn main(hello: String) -> anyhow::Result<()> {
 }
 ```
 
-This is because Rust requires procedural macros to produce legal code *for each* macroexpansion. If you put `#[tokio::main]` before, then it outputs the code preserving the parameters as is, while `main` funtions with parameters are not legal in Rust. To workaround this, `#[fncmd]` detects other attributes (this is only possible when the others are present after `#[fncmd]`), and if any, remove the parameters temporarily and save them into an internal field for later use, so that the others expand into legal code.
+This is because ~~Rust requires procedural macros to produce legal code *for each* macroexpansion~~Sorry this is wrong, it's not Rust but the macros like `#[tokio::main]` *do* some assertions on their own, so we need to feed them a well-mannered version of `main` function, e.g. removing parameters.
 
 Position of the doc comment doesn't matter.
 

@@ -4,16 +4,11 @@
 pub use fncmd_impl::fncmd;
 
 mod exit_code;
-
 #[doc(hidden)]
-pub use exit_code::ExitCode;
-#[doc(hidden)]
-pub use exit_code::IntoExitCode;
-
-mod termination;
-
-#[doc(hidden)]
-pub use termination::Termination;
+pub use exit_code::{ExitCode, IntoExitCode};
 
 #[doc(hidden)]
 pub use clap;
+
+#[doc(hidden)]
+pub use once_cell::sync::Lazy;

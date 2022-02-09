@@ -30,8 +30,8 @@ use models::*;
 ///   println!("{:?} {:?}", foo, bar);
 /// }
 /// ```
-#[proc_macro_attribute]
 #[proc_macro_error]
+#[proc_macro_attribute]
 pub fn fncmd(attr: TokenStream, item: TokenStream) -> TokenStream {
 	// Get project metadata
 	let metadata = MetadataCommand::new().exec().unwrap();
