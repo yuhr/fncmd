@@ -38,8 +38,7 @@ impl Fncmd {
 
 		let fn_attrs = item.attrs.iter();
 		let fn_vis = &item.vis;
-		let config_args = config.args();
-		let fn_args = config_args.as_ref().unwrap_or(&item.sig.inputs).iter();
+		let fn_args = item.sig.inputs.iter();
 		let fn_ret = &item.sig.output;
 		let fn_body = &item.block;
 		let asyncness = &item.sig.asyncness;
@@ -94,25 +93,6 @@ impl ToTokens for Fncmd {
 			asyncness,
 			item,
 		} = self;
-
-		// Save original code into the internal field of the attribute macro, in
-		// order to avoid incompatibility with exotic attributes such as
-		// `#[tokio::main]`. This workaround is needed because Rust requires
-		// procedural macros to produce legal Rust code *for each* macroexpansion,
-		// but `main` function with parameters is not legal.
-		if !attrs.is_empty() {
-			let __item_fn = quote!(#item).to_string();
-			quote! {
-				#documentation
-				#(#attrs)*
-				#[fncmd::fncmd(__item_fn=#__item_fn)]
-				#visibility #asyncness fn main() #return_type {
-					#body
-				}
-			}
-			.to_tokens(tokens);
-			return;
-		}
 
 		let vars: Vec<TokenStream> = args
 			.iter()
@@ -176,12 +156,18 @@ impl ToTokens for Fncmd {
 				#(#vars,)*
 				..
 			} = __fncmd_options;
-			#body
+			#(#attrs)*
+			#asyncness fn main() #return_type {
+				#body
+			}
+			main()
 		};
 
 		let parse = quote! {
-			use fncmd::clap::Parser;
-			__fncmd_options::parse()
+			let __fncmd_options = __fncmd_options.unwrap_or_else(|| {
+				use fncmd::clap::Parser;
+				__fncmd_options::parse()
+			});
 		};
 
 		let into_exit_code = quote! {
@@ -191,7 +177,7 @@ impl ToTokens for Fncmd {
 
 		let exec_body = if !subcmd_cases.is_empty() {
 			quote! {
-				let __fncmd_options = __fncmd_options.unwrap_or_else(|| { #parse });
+				#parse
 				match __fncmd_options.__fncmd_subcmds {
 					#(#subcmd_cases)*
 					_ => { #into_exit_code }
@@ -199,7 +185,7 @@ impl ToTokens for Fncmd {
 			}
 		} else {
 			quote! {
-				let __fncmd_options = __fncmd_options.unwrap_or_else(|| { #parse });
+				#parse
 				#into_exit_code
 			}
 		};
@@ -220,7 +206,7 @@ impl ToTokens for Fncmd {
 
 			#subcmd_enum
 
-			#asyncness fn __fncmd_exec_impl(__fncmd_options: __fncmd_options) #return_type {
+			fn __fncmd_exec_impl(__fncmd_options: __fncmd_options) #return_type {
 				#exec_impl_body
 			}
 
@@ -229,7 +215,7 @@ impl ToTokens for Fncmd {
 				#exec_body
 			}
 
-			fn main() -> impl fncmd::Termination {
+			fn main() -> fncmd::ExitCode {
 				__fncmd_exec(None)
 			}
 		}
