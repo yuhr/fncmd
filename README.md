@@ -195,4 +195,4 @@ That's why `fncmd` states “opinionated”. Showing authors on the help will si
 
 The way it automatically determines which targets are subcommands or not requires the `#[fncmd]` macro itself to know the name of the attached target, and thus the path of the file at which it has been called. This can be achieved by [`Span::source_file`](https://doc.rust-lang.org/proc_macro/struct.Span.html#method.source_file), which is behind an unstable feature flag `proc_macro_span`.
 
-Additionally, in order to allow users to use different return types for subcommand functions, it uses [`std::process::Termination`](https://doc.rust-lang.org/std/process/trait.Termination.html) trait internally, which is behind `termination_trait_lib`.
+Additionally, in order to allow users to use different return types for subcommand functions, it uses [`std::process::Termination`](https://doc.rust-lang.org/std/process/trait.Termination.html) trait internally, which is behind `termination_trait_lib` and `process_exitcode_placeholder`.
