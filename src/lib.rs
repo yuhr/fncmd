@@ -1,4 +1,3 @@
-#![feature(termination_trait_lib, process_exitcode_placeholder)]
 #![doc = include_str!("../README.md")]
 
 pub use fncmd_impl::fncmd;
