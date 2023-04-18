@@ -6,11 +6,7 @@ pub struct FncmdVisitor<'ast> {
 }
 
 impl FncmdVisitor<'_> {
-	pub fn new() -> Self {
-		Self {
-			functions: Vec::new(),
-		}
-	}
+	pub fn new() -> Self { Self { functions: Vec::new() } }
 }
 
 impl<'ast> Visit<'ast> for FncmdVisitor<'ast> {

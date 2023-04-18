@@ -1,0 +1,3 @@
+module_inception = false
+collapsible_else_if = false
+write_with_newline = false
