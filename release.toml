@@ -1,5 +1,4 @@
 pre-release-replacements = [
-	{ file = "README.md", search = "fncmd = \".+\"", replace = "{{crate_name}} = \"{{version}}\"" },
 	{ file = "Cargo.toml", search = "fncmd-impl = \\{ path = \"impl\", version = \"=.+\"\\}", replace = "fncmd-impl = { path = \"impl\", version = \"={{version}}\" }" },
 ]
 pre-release-commit-message = "chore: bump version to {{version}}"

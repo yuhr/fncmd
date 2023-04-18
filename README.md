@@ -20,17 +20,10 @@ This concept is tremendously inspired by [`argopt`](https://crates.io/crates/arg
 
 **This crate is nightly-only**. Make sure you have set up your toolchain as nightly before using (e.g. having [`rust-toolchain`](https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file) file). You might be interested in [Why nightly](#why-nightly).
 
-To install, if you use [`cargo-edit`](https://crates.io/crates/cargo-edit):
+To install, run:
 
 ```sh
 cargo add fncmd
-```
-
-Or you can manually edit `Cargo.toml`:
-
-```toml
-[dependencies]
-fncmd = "1.2.5"
 ```
 
 ## Basics
@@ -177,7 +170,7 @@ pub async fn main(hello: String) -> anyhow::Result<()> {
 }
 ```
 
-This is because ~~Rust requires procedural macros to produce legal code *for each* macroexpansion~~Sorry this is wrong, it's not Rust but the macros like `#[tokio::main]` *do* some assertions on their own, so we need to feed them a well-mannered version of `main` function, e.g. removing parameters.
+This is because the macros like `#[tokio::main]` do some assertions on their own, so we need to feed them a well-mannered version of `main` function, e.g. removing parameters.
 
 Position of the doc comment doesn't matter.
 

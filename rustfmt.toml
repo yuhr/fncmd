@@ -1,2 +1,12 @@
+brace_style = "PreferSameLine"
+control_brace_style = "AlwaysSameLine"
+fn_single_line = true
 hard_tabs = true
+match_arm_blocks = false
+max_width = 100
 newline_style = "Unix"
+overflow_delimited_expr = true
+trim_final_newlines = "Always"
+use_field_init_shorthand = true
+use_small_heuristics = "Max"
+where_single_line = true
