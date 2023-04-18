@@ -24,12 +24,7 @@ impl FncmdArg {
 		let mut attrs = Vec::new();
 
 		for attr in arg.attrs.iter() {
-			match attr
-				.path
-				.get_ident()
-				.map(|ident| ident.to_string())
-				.as_deref()
-			{
+			match attr.path.get_ident().map(|ident| ident.to_string()).as_deref() {
 				Some("doc") => {
 					doc = Some(quote! { #attr });
 				}
@@ -73,23 +68,14 @@ impl FncmdArg {
 				mutability: pat_ident.mutability,
 			}
 		} else {
-			abort!(
-				pat.span(),
-				"pattern types other than a simple `Ident` are not supported yet"
-			);
+			abort!(pat.span(), "pattern types other than a simple `Ident` are not supported yet");
 		}
 	}
 }
 
 impl ToTokens for FncmdArg {
 	fn to_tokens(&self, tokens: &mut TokenStream) {
-		let Self {
-			name,
-			documentation,
-			attributes,
-			ty,
-			..
-		} = self;
+		let Self { name, documentation, attributes, ty, .. } = self;
 		quote! {
 			#documentation
 			#(#attributes)*

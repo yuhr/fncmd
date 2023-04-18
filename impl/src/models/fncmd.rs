@@ -73,9 +73,7 @@ impl Fncmd {
 }
 
 impl From<Fncmd> for proc_macro::TokenStream {
-	fn from(from: Fncmd) -> proc_macro::TokenStream {
-		quote!(#from).into()
-	}
+	fn from(from: Fncmd) -> proc_macro::TokenStream { quote!(#from).into() }
 }
 
 impl ToTokens for Fncmd {

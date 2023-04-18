@@ -7,13 +7,9 @@ pub trait IntoExitCode {
 }
 
 impl<T: std::process::Termination> IntoExitCode for T {
-	fn into_exit_code(self) -> ExitCode {
-		ExitCode(self.report())
-	}
+	fn into_exit_code(self) -> ExitCode { ExitCode(self.report()) }
 }
 
 impl std::process::Termination for ExitCode {
-	fn report(self) -> std::process::ExitCode {
-		self.0
-	}
+	fn report(self) -> std::process::ExitCode { self.0 }
 }
