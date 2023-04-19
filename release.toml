@@ -1,6 +1,2 @@
-pre-release-replacements = [
-	{ file = "Cargo.toml", search = "fncmd-impl = \\{ path = \"impl\", version = \"=.+\"\\}", replace = "fncmd-impl = { path = \"impl\", version = \"={{version}}\" }" },
-]
 pre-release-commit-message = "chore: bump version to {{version}}"
-consolidate-commits = true
 shared-version = true
