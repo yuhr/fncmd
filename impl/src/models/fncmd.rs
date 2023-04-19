@@ -24,8 +24,8 @@ pub struct Fncmd {
 
 impl Fncmd {
 	pub fn parse(
-		self_name: String,
-		self_version: String,
+		name: String,
+		version: String,
 		_: FncmdAttr,
 		item: ItemFn,
 		subcmds: FncmdSubcmds,
@@ -58,7 +58,7 @@ impl Fncmd {
 		let fncmd_args: Vec<FncmdArg> = fn_args.map(FncmdArg::parse).collect();
 
 		Fncmd {
-			name: self_name,
+			name,
 			documentation: fn_doc,
 			attributes: fncmd_attrs,
 			args: fncmd_args,
@@ -66,7 +66,7 @@ impl Fncmd {
 			body: fn_body.clone(),
 			visibility: fn_vis.clone(),
 			subcmds,
-			version: self_version,
+			version,
 			asyncness: *asyncness,
 		}
 	}
