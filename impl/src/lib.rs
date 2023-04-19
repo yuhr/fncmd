@@ -29,14 +29,14 @@ use context::*;
 #[proc_macro_error]
 #[proc_macro_attribute]
 pub fn fncmd(attr: TokenStream, item: TokenStream) -> TokenStream {
-	// Get information about the target and package
+	// Get information about the target and package.
 	let call_site = Span::call_site();
 	let (target, package) = CONTEXT.get_target_and_package_of(&call_site);
 	let name = target.name.clone();
 	let version = package.version.to_string();
 	let subcmds = FncmdSubcmds::from((target, package));
 
-	// Parse the input tokens
+	// Parse the input tokens.
 	let attr = parse_macro_input!(attr as AttributeArgs);
 	let attr = FncmdAttr::from_list(&attr).unwrap();
 	let item = parse_macro_input!(item as ItemFn);

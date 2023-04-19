@@ -1,5 +1,4 @@
-/// An intermediate type to abstract over various return types from subcommand
-/// functions.
+/// An intermediate type to abstract over various return types from subcommand functions.
 pub struct ExitCode(std::process::ExitCode);
 
 pub trait IntoExitCode {
