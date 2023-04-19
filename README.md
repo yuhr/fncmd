@@ -3,7 +3,8 @@
 <p>Command line interface as a function.</p>
 <h1>fncmd</h1>
 
-[![Crates.io](https://img.shields.io/crates/v/fncmd)](https://crates.io/crates/fncmd)
+[![crates.io](https://img.shields.io/crates/v/fncmd)](https://crates.io/crates/fncmd)
+[![docs.rs](https://img.shields.io/docsrs/fncmd)](https://docs.rs/fncmd/latest/fncmd/)
 [![License](https://img.shields.io/github/license/yuhr/fncmd)](https://github.com/yuhr/fncmd/blob/develop/LICENSE)
 
 <br><br></div>
@@ -20,7 +21,7 @@ This concept is tremendously inspired by [`argopt`](https://crates.io/crates/arg
 
 **This crate is nightly-only**. Make sure you have set up your toolchain as nightly before using (e.g. having [`rust-toolchain`](https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file) file). You might be interested in [Why nightly](#why-nightly).
 
-To install, run:
+To install, run in your project directory:
 
 ```sh
 cargo add fncmd
@@ -131,7 +132,7 @@ another-orphan
 └── another-orphan sub
 ```
 
-Looking at `another-orphan`, it's not contained within `another`, because it's not exposed as `pub`. As seen here, making the `main` of a target non-`pub` is only meaningful when you want it to have a common prefix with others but not to be included by another command, so in most cases you can set `pub` without thinking.
+Note that `another-orphan` is not contained within `another`, because it's not exposed as `pub`. As seen here, making the `main` of a target non-`pub` is only meaningful when you want it to have a common prefix with others but not to be included by another command, so in most cases you can set `pub` without thinking.
 
 Of course the same structure can be achieved without manually editing `Cargo.toml`, by placing files into the default location:
 
@@ -176,13 +177,19 @@ Position of the doc comment doesn't matter.
 
 ## Restrictions
 
-`fncmd` won't support following features by design:
+`fncmd` won't support following features by design. That's why `fncmd` states “opinionated”.
 
-- Show authors on the help message
-- Change the name and the version of the command to arbitrary values
-- Attach `#[fncmd]` to functions other than `main`
+### Can't show authors in the help message
 
-That's why `fncmd` states “opinionated”. Showing authors on the help will simply be a noise from general user's point of view, and changing metadata such as `name` and `version` to different values from the ones defined in `Cargo.toml` can easily undermine maintainability and consistency of them. Attaching `#[fncmd]` to arbitrary functions can lead to a bloated single file codebase, which should be avoided in general.
+Showing authors in the help will simply be a noise from general user's point of view.
+
+### Can't change the name and the version of the commands to different values
+
+Changing metadata such as `name` and `version` to different values from the ones defined in `Cargo.toml` can easily undermine maintainability and consistency of them.
+
+### Can't attach `#[fncmd]` to functions other than `main`
+
+Attaching `#[fncmd]` to arbitrary functions can lead to a bloated single file codebase, which should be avoided in general.
 
 ## Why nightly
 
