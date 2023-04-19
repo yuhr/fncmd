@@ -32,13 +32,13 @@ impl FncmdArg {
 					let mut attr = attr.clone();
 					let mut tokens = attr.tokens.clone();
 
-					// If no configuration was provided, enable `long` by default
+					// If no configuration was provided, enable `long` by default.
 					if attr.tokens.into_iter().count() == 0 {
 						tokens.extend(quote!((long)))
 					}
 					attr.tokens = tokens;
 
-					// Change `opt` into `clap`
+					// Change `opt` into `clap`.
 					let spanned_clap = quote_spanned!(attr.path.get_ident().span() => clap);
 					attr.path = parse_quote! { #spanned_clap };
 

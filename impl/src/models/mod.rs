@@ -9,6 +9,3 @@ pub use self::fncmd_attr::*;
 
 pub mod fncmd_subcmds;
 pub use self::fncmd_subcmds::*;
-
-pub mod fncmd_visitor;
-pub use self::fncmd_visitor::*;
