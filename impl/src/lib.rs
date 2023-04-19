@@ -1,23 +1,14 @@
 #![feature(proc_macro_span)]
 
-use std::collections::HashMap;
-use std::fs::File;
-use std::io::Read;
-
 use darling::FromMeta;
 use proc_macro::{Span, TokenStream};
 use proc_macro_error::proc_macro_error;
-use syn::visit::Visit;
-use syn::{parse_file, parse_macro_input, AttributeArgs, ItemFn};
+use syn::{parse_macro_input, AttributeArgs, ItemFn};
 
 mod models;
 use models::*;
-
 mod context;
 use context::*;
-
-mod visitor;
-use visitor::*;
 
 /// The `fncmd` macro. This can only be applied to the `main` function.
 ///

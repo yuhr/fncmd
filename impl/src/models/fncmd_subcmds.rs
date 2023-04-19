@@ -1,10 +1,10 @@
-use crate::visitor::Visitor;
 use cargo_metadata::{Package, Target};
 use std::fs::File;
 use std::io::Read;
 use std::{collections::HashMap, path::PathBuf};
 use syn::parse_file;
 use syn::visit::Visit;
+use syn::ItemFn;
 
 pub struct FncmdSubcmds {
 	map: HashMap<String, (bool, PathBuf)>,
@@ -38,9 +38,7 @@ impl From<(&Target, &Package)> for FncmdSubcmds {
 				};
 				// If parsing failed, just skip hereafter.
 				parse_file(&content).ok().and_then(|ast| {
-					let mut visitor = Visitor::new();
-					visitor.visit_file(&ast);
-					visitor.get_main_fncmd().map(|function| {
+					Visitor::from(&ast).get_main_fncmd().map(|function| {
 						// Prepare to `collect` into a `HashMap`.
 						(
 							target.name.to_owned(),
@@ -70,5 +68,48 @@ impl From<(&Target, &Package)> for FncmdSubcmds {
 		}
 
 		FncmdSubcmds { map }
+	}
+}
+
+struct Visitor<'ast> {
+	functions: Vec<&'ast ItemFn>,
+}
+
+impl<'ast> From<&'ast syn::File> for Visitor<'ast> {
+	fn from(ast: &'ast syn::File) -> Self {
+		let mut visitor = Visitor { functions: Vec::new() };
+		visitor.visit_file(ast);
+		visitor
+	}
+}
+
+impl<'ast> Visit<'ast> for Visitor<'ast> {
+	fn visit_item_fn(&mut self, node: &'ast ItemFn) {
+		self.functions.push(node);
+		// We don't need to visit nested functions.
+		// visit::visit_item_fn(self, node);
+	}
+}
+
+impl<'ast> Visitor<'ast> {
+	/// Find a main function that will be handled by `fncmd`.
+	fn get_main_fncmd(&self) -> Option<&'ast ItemFn> {
+		// Only functions are relevant here.
+		self.functions
+			.iter()
+			.find(|&&function| {
+				// Needs to be `main`.
+				function.sig.ident == "main"
+						// And needs to have `#[fncmd]` attribute.
+							&& function
+								.attrs
+								.iter()
+								.any(|attr| {
+									// Only valid form is `#[fncmd::fncmd]` or `#[fncmd]`. Renaming is not supported at this time.
+									attr.path.segments.len() <= 2
+									&& attr.path.segments.iter().all(|segment| segment.ident == "fncmd")
+								})
+			})
+			.copied()
 	}
 }
