@@ -1,0 +1,10 @@
+[package]
+name = "example-workspace-foo"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+fncmd = { path = "../../../.." }
+
+[dev-dependencies]
+trycmd = "0.14.16"
