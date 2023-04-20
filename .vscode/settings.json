@@ -8,5 +8,11 @@
 	"trailing-spaces.includeEmptyLines": false,
 	"editor.renderWhitespace": "all",
 	"git.ignoreLimitWarning": true,
-	"rust-analyzer.showUnlinkedFileNotification": false
+	"rust-analyzer.linkedProjects": [
+		// <https://github.com/rust-lang/rust-analyzer/issues/8622>
+		"./examples/example-basic/Cargo.toml",
+		"./examples/example-subcmds/Cargo.toml",
+		"./examples/example-subcmdsflat/Cargo.toml",
+		"./examples/example-workspace/Cargo.toml"
+	]
 }
