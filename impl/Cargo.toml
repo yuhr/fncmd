@@ -9,6 +9,7 @@ edition = "2021"
 exclude = ["release.toml"]
 
 [lib]
+doctest = false
 proc-macro = true
 
 [dependencies]

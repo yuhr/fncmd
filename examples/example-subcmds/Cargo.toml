@@ -1,0 +1,12 @@
+[package]
+name = "example-subcmds"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+fncmd = { path = "../.." }
+
+[dev-dependencies]
+trycmd = "0.14.16"
+
+[workspace]
