@@ -6,18 +6,15 @@ Top-level command is called.
 
 ```console
 $ example-subcmdsflat --help
-example-subcmdsflat 0.0.0
+Usage: example-subcmdsflat [COMMAND]
 
-USAGE:
-    example-subcmdsflat [SUBCOMMAND]
+Commands:
+  child  
+  help   Print this message or the help of the given subcommand(s)
 
-OPTIONS:
-    -h, --help       Print help information
-    -V, --version    Print version information
-
-SUBCOMMANDS:
-    child    
-    help     Print this message or the help of the given subcommand(s)
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
 
 ```
 
@@ -36,12 +33,11 @@ Two-level-deep subcommand is called.
 ```console
 $ example-subcmdsflat orphan
 ? 2
-error: Found argument 'orphan' which wasn't expected, or isn't valid in this context
+error: unrecognized subcommand 'orphan'
 
-USAGE:
-    example-subcmdsflat [SUBCOMMAND]
+Usage: example-subcmdsflat [COMMAND]
 
-For more information try --help
+For more information, try '--help'.
 
 ```
 

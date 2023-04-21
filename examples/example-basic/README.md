@@ -1,32 +1,26 @@
 ```console
 $ example-basic
 ? 2
-error: The following required arguments were not provided:
-    <GREETING>
+error: the following required arguments were not provided:
+  <GREETING>
 
-USAGE:
-    example-basic [OPTIONS] <GREETING> [NAME]
+Usage: example-basic <GREETING> [NAME]
 
-For more information try --help
+For more information, try '--help'.
 
 ```
 
 ```console
 $ example-basic --help
-example-basic 0.0.0
-Prints greeting message
+Description of the command line tool
 
-USAGE:
-    example-basic [OPTIONS] <GREETING> [NAME]
+Usage: crate-name [OPTIONS] --foo <FOO>
 
-ARGS:
-    <GREETING>    Greeting message
-    <NAME>        Name of someone to greet
-
-OPTIONS:
-        --bang       Whether to use “!” instead of “.” at the end of the message
-    -h, --help       Print help information
-    -V, --version    Print version information
+Options:
+  -f, --foo <FOO>  Argument foo
+  -b, --bar <BAR>  Argument bar
+  -h, --help       Print help
+  -V, --version    Print version
 
 ```
 
