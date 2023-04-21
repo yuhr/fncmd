@@ -139,6 +139,8 @@ impl ToTokens for Fncmd {
 
 		let subcmd_enum = if !subcmd_enumitems.is_empty() {
 			quote! {
+				#[doc(hidden)]
+				#[allow(non_camel_case_types)]
 				#[derive(fncmd::clap::Parser)]
 				#visibility enum __fncmd_subcmds {
 					#(#subcmd_enumitems,)*
@@ -217,13 +219,17 @@ impl ToTokens for Fncmd {
 
 			#subcmd_enum
 
+			#[doc(hidden)]
+			#[allow(non_upper_case_globals)]
 			static __fncmd_options_static: fncmd::Lazy<std::sync::Mutex<Option<__fncmd_options>>> =
 				fncmd::Lazy::new(|| std::sync::Mutex::new(None));
 
+			#[doc(hidden)]
 			fn __fncmd_exec_impl() #return_type {
 				#exec_impl_body
 			}
 
+			#[doc(hidden)]
 			#[inline]
 			#visibility fn __fncmd_exec(__fncmd_options: Option<__fncmd_options>) -> fncmd::ExitCode {
 				#exec_body
