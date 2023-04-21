@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [develop]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: Test
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        toolchain: [nightly]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          profile: minimal
+          override: true
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |-
+            . -> target
+            examples/example-basic -> target
+            examples/example-subcmds -> target
+            examples/example-subcmdsflat -> target
+            examples/example-workspace -> target
+      - uses: extractions/setup-just@v1
+      - name: Run tests
+        run: just test
