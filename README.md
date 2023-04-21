@@ -50,19 +50,18 @@ pub fn main(
 
 That's all, and now you got a command line program with options handled by `clap`. With above code, the help message will be like below:
 
-```plaintext
-crate-name 0.1.0
-
+```console
+$ crate-name --help
 Description of the command line tool
 
-USAGE:
-    crate-name [OPTIONS] --foo <FOO>
+Usage: crate-name [OPTIONS] --foo <FOO>
 
-OPTIONS:
-    -b, --bar <BAR>    Argument bar
-    -f, --foo <FOO>    Argument foo
-    -h, --help         Print help information
-    -V, --version      Print version information
+Options:
+  -f, --foo <FOO>  Argument foo
+  -b, --bar <BAR>  Argument bar
+  -h, --help       Print help
+  -V, --version    Print version
+
 ```
 
 The name and the version of your crate are automatically inferred from Cargo metadata.
@@ -151,7 +150,7 @@ src
 
 Sometimes you may want to transform the `main` function with another attribute macro such as `#[tokio::main]` and `#[async_std::main]`. In such case you have to put `#[fncmd]` at the outmost level:
 
-```rs
+```rust
 /// Description of the command line tool
 #[fncmd]
 #[tokio::main]
@@ -162,7 +161,7 @@ pub async fn main(hello: String) -> anyhow::Result<()> {
 
 But not:
 
-```rs
+```rust
 /// Description of the command line tool
 #[tokio::main]
 #[fncmd]
