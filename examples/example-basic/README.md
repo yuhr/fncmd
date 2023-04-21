@@ -12,15 +12,18 @@ For more information, try '--help'.
 
 ```console
 $ example-basic --help
-Description of the command line tool
+Prints greeting message
 
-Usage: crate-name [OPTIONS] --foo <FOO>
+Usage: example-basic [OPTIONS] <GREETING> [NAME]
+
+Arguments:
+  <GREETING>  Greeting message
+  [NAME]      Name of someone to greet
 
 Options:
-  -f, --foo <FOO>  Argument foo
-  -b, --bar <BAR>  Argument bar
-  -h, --help       Print help
-  -V, --version    Print version
+      --bang     Whether to use “!” instead of “.” at the end of the message
+  -h, --help     Print help
+  -V, --version  Print version
 
 ```
 
