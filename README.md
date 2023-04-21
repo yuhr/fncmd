@@ -3,6 +3,10 @@
 <p>Command line interface as a function.</p>
 <h1>fncmd</h1>
 
+```rust
+#[fncmd::fncmd] pub fn main() { println!("Hello, World!"); }
+```
+
 [![crates.io](https://img.shields.io/crates/v/fncmd)](https://crates.io/crates/fncmd)
 [![docs.rs](https://img.shields.io/docsrs/fncmd)](https://docs.rs/fncmd/latest/fncmd/)
 [![License](https://img.shields.io/github/license/yuhr/fncmd)](https://github.com/yuhr/fncmd/blob/develop/LICENSE)
@@ -15,7 +19,7 @@
 
 Imagine a command line program you want to create. Essentially, it can be abstracted as a simple function that takes command line options as arguments. Then there should be nothing to stop you from being able to write it *literally* as a function, without using structs or builders like today's Rustaceans do.
 
-This concept is tremendously inspired by [`argopt`](https://crates.io/crates/argopt), I really appreciate the work. However, it still requires a bit of cumbersome code, especially for handling subcommands. `fncmd` has been rewritten from scratch to get rid of all the complexities. Let's dig into [Subcommands](#subcommands) section to see how we can handle it.
+This concept is tremendously inspired by [`argopt`](https://crates.io/crates/argopt), I really appreciate the work. However, it still requires a bit of cumbersome code, especially for handling subcommands. `fncmd` has been rewritten from scratch to get rid of all the complexities. Dig into [Subcommands](#subcommands) section to see how we can handle it.
 
 ## Installation
 
@@ -26,6 +30,8 @@ To install, run in your project directory:
 ```sh
 cargo add fncmd
 ```
+
+For those who prefer case studies: see [`examples`](./examples).
 
 ## Basics
 
@@ -64,9 +70,9 @@ Options:
 
 ```
 
-The name and the version of your crate are automatically inferred from Cargo metadata.
+The name and the version of your command are automatically inferred from Cargo metadata.
 
-The usage of the `opt` attribute is exactly the same as the [underlying `clap` attribute on arguments](https://github.com/clap-rs/clap#using-derive-macros), they're just passed as is, except that it appends `(long)` if no configuration was provided, i.e. `#[opt]` means `#[opt(long)]`. If you want to take the argument `foo` without `--foo`, just omit `#[opt]`.
+The usage of the `opt` attribute is almost exactly the same as the underlying [`arg` attribute](https://docs.rs/clap/4.2.4/clap/_derive/index.html#arg-attributes). They're just passed as is, except that `(long)` is implied if no configuration was provided, i.e. `#[opt]` means `#[opt(long)]`. If you want to take the argument `foo` without `--foo`, just omit `#[opt]`.
 
 ## Subcommands
 
@@ -131,7 +137,7 @@ another-orphan
 └── another-orphan sub
 ```
 
-Note that `another-orphan` is not contained within `another`, because it's not exposed as `pub`. As seen here, making the `main` of a target non-`pub` is only meaningful when you want it to have a common prefix with others but not to be included by another command, so in most cases you can set `pub` without thinking.
+Note that `another-orphan` is not contained within `another`, because it's not exposed as `pub`. As seen here, making the `main` non-`pub` is only meaningful when you want it to have a common prefix with others but not to be included by another command, so in most cases you can set `pub` without thinking.
 
 Of course the same structure can be achieved without manually editing `Cargo.toml`, by placing files into the default location:
 
