@@ -14,5 +14,6 @@
 		"./examples/example-subcmds/Cargo.toml",
 		"./examples/example-subcmdsflat/Cargo.toml",
 		"./examples/example-workspace/Cargo.toml"
-	]
+	],
+	"rust-analyzer.cargo.extraArgs": ["--target-dir", "${workspaceFolder}/target"]
 }
