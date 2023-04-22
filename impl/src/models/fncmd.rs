@@ -1,4 +1,3 @@
-use inflector::Inflector;
 use proc_macro2::TokenStream;
 use proc_macro_error::abort;
 use quote::{quote, ToTokens};
@@ -103,11 +102,10 @@ impl ToTokens for Fncmd {
 		let (subcmd_imports, subcmd_patterns): (Vec<_>, Vec<_>) = subcmds
 			.iter()
 			.map(|(name, path)| {
-				let subcmd_name = name.strip_prefix(cmd_name).unwrap();
-				let snake_case_name = subcmd_name.to_snake_case();
-				let enumitem_name: Ident = parse_str(&format!("__{}", snake_case_name)).unwrap();
-				let mod_name: Ident =
-					parse_str(&format!("__fncmd_mod_{}", snake_case_name)).unwrap();
+				let subcmd_name = name.strip_prefix(&format!("{cmd_name}-")).unwrap();
+				let subcmd_name = subcmd_name.to_lowercase();
+				let enumitem_name: Ident = parse_str(&format!("__{}", subcmd_name)).unwrap();
+				let mod_name: Ident = parse_str(&format!("__fncmd_mod_{}", subcmd_name)).unwrap();
 				let path = path
 					.to_str()
 					.unwrap()
