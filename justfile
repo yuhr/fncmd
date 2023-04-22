@@ -6,8 +6,9 @@ setup:
 	git config --local core.hooksPath .githooks
 
 test *ARGS:
+	RUST_BACKTRACE=1 cargo test --workspace {{ARGS}}
 	for project in examples/example-*; do \
-		RUST_BACKTRACE=1 cargo test --manifest-path $project/Cargo.toml --workspace {{ARGS}} -- --nocapture; \
+		RUST_BACKTRACE=1 cargo test --workspace --manifest-path $project/Cargo.toml --target-dir ../../target {{ARGS}} -- --nocapture; \
 	done
 
 bump *ARGS:

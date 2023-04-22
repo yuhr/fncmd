@@ -27,13 +27,6 @@ jobs:
           profile: minimal
           override: true
       - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: |-
-            . -> target
-            examples/example-basic -> target
-            examples/example-subcmds -> target
-            examples/example-subcmdsflat -> target
-            examples/example-workspace -> target
       - uses: extractions/setup-just@v1
       - name: Run tests
         run: just test
