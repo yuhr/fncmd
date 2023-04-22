@@ -13,7 +13,6 @@ doctest = false
 proc-macro = true
 
 [dependencies]
-Inflector = "0.11.4"
 cargo_metadata = "0.15.4"
 darling = "0.13.0"
 once_cell = "1.17.1"

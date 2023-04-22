@@ -1,4 +1,3 @@
-use inflector::Inflector;
 use proc_macro2::TokenStream;
 use proc_macro_error::abort;
 use quote::{quote, ToTokens};
@@ -37,15 +36,15 @@ impl Fncmd {
 			);
 		}
 
-		let fn_attrs = item.attrs.iter();
+		let fn_attrs = &item.attrs;
 		let fn_vis = &item.vis;
-		let fn_args = item.sig.inputs.iter();
+		let fn_args = &item.sig.inputs;
 		let fn_ret = &item.sig.output;
 		let fn_body = &item.block;
 		let asyncness = &item.sig.asyncness;
 
 		let mut fn_doc = None;
-		let mut fncmd_attrs: Vec<Attribute> = Vec::new();
+		let mut fncmd_attrs: Vec<Attribute> = Vec::with_capacity(fn_attrs.len());
 
 		for attr in fn_attrs {
 			if attr.path.is_ident("doc") {
@@ -55,7 +54,7 @@ impl Fncmd {
 			}
 		}
 
-		let fncmd_args: Vec<FncmdArg> = fn_args.map(FncmdArg::parse).collect();
+		let fncmd_args: Vec<FncmdArg> = fn_args.iter().map(FncmdArg::parse).collect();
 
 		Fncmd {
 			name,
@@ -67,7 +66,7 @@ impl Fncmd {
 			visibility: fn_vis.clone(),
 			subcmds,
 			version,
-			asyncness: *asyncness,
+			asyncness: asyncness.clone(),
 		}
 	}
 }
@@ -102,12 +101,11 @@ impl ToTokens for Fncmd {
 
 		let (subcmd_imports, subcmd_patterns): (Vec<_>, Vec<_>) = subcmds
 			.iter()
-			.map(|(name, (_, path))| {
-				let subcmd_name = name.strip_prefix(cmd_name).unwrap();
-				let snake_case_name = subcmd_name.to_snake_case();
-				let enumitem_name: Ident = parse_str(&format!("__{}", snake_case_name)).unwrap();
-				let mod_name: Ident =
-					parse_str(&format!("__fncmd_mod_{}", snake_case_name)).unwrap();
+			.map(|(name, path)| {
+				let subcmd_name = name.strip_prefix(&format!("{cmd_name}-")).unwrap();
+				let subcmd_name = subcmd_name.to_lowercase();
+				let enumitem_name: Ident = parse_str(&format!("__{}", subcmd_name)).unwrap();
+				let mod_name: Ident = parse_str(&format!("__fncmd_mod_{}", subcmd_name)).unwrap();
 				let path = path
 					.to_str()
 					.unwrap()

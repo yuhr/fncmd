@@ -21,7 +21,7 @@ impl FncmdArg {
 		};
 
 		let mut doc: Option<TokenStream> = None;
-		let mut attrs = Vec::new();
+		let mut attrs = Vec::with_capacity(arg.attrs.len());
 
 		for attr in arg.attrs.iter() {
 			match attr.path.get_ident().map(|ident| ident.to_string()).as_deref() {
