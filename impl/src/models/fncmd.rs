@@ -37,9 +37,9 @@ impl Fncmd {
 			);
 		}
 
-		let fn_attrs = item.attrs.iter();
+		let fn_attrs = &item.attrs;
 		let fn_vis = &item.vis;
-		let fn_args = item.sig.inputs.iter();
+		let fn_args = &item.sig.inputs;
 		let fn_ret = &item.sig.output;
 		let fn_body = &item.block;
 		let asyncness = &item.sig.asyncness;
@@ -55,7 +55,7 @@ impl Fncmd {
 			}
 		}
 
-		let fncmd_args: Vec<FncmdArg> = fn_args.map(FncmdArg::parse).collect();
+		let fncmd_args: Vec<FncmdArg> = fn_args.iter().map(FncmdArg::parse).collect();
 
 		Fncmd {
 			name,
@@ -67,7 +67,7 @@ impl Fncmd {
 			visibility: fn_vis.clone(),
 			subcmds,
 			version,
-			asyncness: *asyncness,
+			asyncness: asyncness.clone(),
 		}
 	}
 }
