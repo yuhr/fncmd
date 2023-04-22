@@ -102,7 +102,7 @@ impl ToTokens for Fncmd {
 
 		let (subcmd_imports, subcmd_patterns): (Vec<_>, Vec<_>) = subcmds
 			.iter()
-			.map(|(name, (_, path))| {
+			.map(|(name, path)| {
 				let subcmd_name = name.strip_prefix(cmd_name).unwrap();
 				let snake_case_name = subcmd_name.to_snake_case();
 				let enumitem_name: Ident = parse_str(&format!("__{}", snake_case_name)).unwrap();

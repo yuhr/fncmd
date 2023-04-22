@@ -7,11 +7,11 @@ use syn::visit::Visit;
 use syn::ItemFn;
 
 pub struct FncmdSubcmds {
-	map: HashMap<String, (bool, PathBuf)>,
+	map: HashMap<String, PathBuf>,
 }
 
 impl FncmdSubcmds {
-	pub fn iter(&self) -> impl Iterator<Item = (&String, &(bool, PathBuf))> { self.map.iter() }
+	pub fn iter(&self) -> impl Iterator<Item = (&String, &PathBuf)> { self.map.iter() }
 }
 
 /// Check if `it` is a subcommand of `of`.
@@ -27,7 +27,7 @@ impl From<(&Target, &Package)> for FncmdSubcmds {
 		});
 
 		// Enumerate all possible subcommands.
-		let mut map: HashMap<String, (bool, PathBuf)> = targets
+		let mut map: HashMap<String, PathBuf> = targets
 			.filter_map(|target| {
 				// Read the file.
 				let content = {
@@ -38,15 +38,9 @@ impl From<(&Target, &Package)> for FncmdSubcmds {
 				};
 				// If parsing failed, just skip hereafter.
 				parse_file(&content).ok().and_then(|ast| {
-					Visitor::from(&ast).get_main_fncmd().map(|function| {
+					Visitor::from(&ast).get_main_fncmd().is_some().then(|| {
 						// Prepare to `collect` into a `HashMap`.
-						(
-							target.name.to_owned(),
-							(
-								matches!(function.vis, syn::Visibility::Public(_)),
-								target.src_path.to_owned().into_std_path_buf(),
-							),
-						)
+						(target.name.clone(), target.src_path.clone().into_std_path_buf())
 					})
 				})
 			})
@@ -62,9 +56,6 @@ impl From<(&Target, &Package)> for FncmdSubcmds {
 			map.retain(|name, _| {
 				!table.iter().any(|(name_other, _)| is_subcommand(name, name_other))
 			});
-
-			// Remove all non-`pub` targets.
-			map.retain(|_, (is_pub, _)| *is_pub);
 		}
 
 		FncmdSubcmds { map }
@@ -100,6 +91,8 @@ impl<'ast> Visitor<'ast> {
 			.find(|&&function| {
 				// Needs to be `main`.
 				function.sig.ident == "main"
+				// And needs to be `pub`.
+				&& matches!(function.vis, syn::Visibility::Public(_))
 						// And needs to have `#[fncmd]` attribute.
 							&& function
 								.attrs
