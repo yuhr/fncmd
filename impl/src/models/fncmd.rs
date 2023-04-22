@@ -45,7 +45,7 @@ impl Fncmd {
 		let asyncness = &item.sig.asyncness;
 
 		let mut fn_doc = None;
-		let mut fncmd_attrs: Vec<Attribute> = Vec::new();
+		let mut fncmd_attrs: Vec<Attribute> = Vec::with_capacity(fn_attrs.len());
 
 		for attr in fn_attrs {
 			if attr.path.is_ident("doc") {
