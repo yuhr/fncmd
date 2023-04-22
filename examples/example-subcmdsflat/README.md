@@ -6,7 +6,7 @@ Top-level command is called.
 
 ```console
 $ example-subcmdsflat --help
-Usage: example-subcmdsflat [COMMAND]
+Usage: example-subcmdsflat[EXE] [COMMAND]
 
 Commands:
   child  
@@ -35,7 +35,7 @@ $ example-subcmdsflat orphan
 ? 2
 error: unrecognized subcommand 'orphan'
 
-Usage: example-subcmdsflat [COMMAND]
+Usage: example-subcmdsflat[EXE] [COMMAND]
 
 For more information, try '--help'.
 

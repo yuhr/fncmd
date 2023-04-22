@@ -60,7 +60,7 @@ That's all, and now you got a command line program with options handled by `clap
 $ crate-name --help
 Description of the command line tool
 
-Usage: crate-name [OPTIONS] --foo <FOO>
+Usage: crate-name[EXE] [OPTIONS] --foo <FOO>
 
 Options:
   -f, --foo <FOO>  Argument foo

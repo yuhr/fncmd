@@ -4,7 +4,7 @@ $ example-basic
 error: the following required arguments were not provided:
   <GREETING>
 
-Usage: example-basic <GREETING> [NAME]
+Usage: example-basic[EXE] <GREETING> [NAME]
 
 For more information, try '--help'.
 
@@ -14,7 +14,7 @@ For more information, try '--help'.
 $ example-basic --help
 Prints greeting message
 
-Usage: example-basic [OPTIONS] <GREETING> [NAME]
+Usage: example-basic[EXE] [OPTIONS] <GREETING> [NAME]
 
 Arguments:
   <GREETING>  Greeting message
