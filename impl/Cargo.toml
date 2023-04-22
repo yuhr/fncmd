@@ -2,7 +2,7 @@
 name = "fncmd-impl"
 version = "2.1.0"
 license = "MPL-2.0"
-authors = ["Yu Shimura <mail@yuhr.org>"]
+authors = ["Sʜɪᴍᴜʀᴀ Yū <mail@yuhr.org>"]
 description = "This crate shouldn't be used directly. Check fncmd."
 repository = "https://github.com/yuhr/fncmd"
 edition = "2021"
