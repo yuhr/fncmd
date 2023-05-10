@@ -5,9 +5,6 @@
 	"rust-analyzer.imports.granularity.group": "module",
 	"rust-analyzer.imports.group.enable": false,
 	"rust-analyzer.imports.prefix": "crate",
-	"trailing-spaces.includeEmptyLines": false,
-	"editor.renderWhitespace": "all",
-	"git.ignoreLimitWarning": true,
 	"rust-analyzer.linkedProjects": [
 		// <https://github.com/rust-lang/rust-analyzer/issues/8622>
 		"./examples/example-basic/Cargo.toml",
