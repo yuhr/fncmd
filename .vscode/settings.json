@@ -1,16 +1,11 @@
 {
 	"editor.formatOnSave": true,
 	"files.removeFinalNewlines": true,
-	"rust-analyzer.imports.granularity.enforce": true,
-	"rust-analyzer.imports.granularity.group": "module",
-	"rust-analyzer.imports.group.enable": false,
-	"rust-analyzer.imports.prefix": "crate",
 	"rust-analyzer.linkedProjects": [
 		// <https://github.com/rust-lang/rust-analyzer/issues/8622>
 		"./examples/example-basic/Cargo.toml",
 		"./examples/example-subcmds/Cargo.toml",
 		"./examples/example-subcmdsflat/Cargo.toml",
 		"./examples/example-workspace/Cargo.toml"
-	],
-	"rust-analyzer.cargo.extraArgs": ["--target-dir", "${workspaceFolder}/target"]
+	]
 }
