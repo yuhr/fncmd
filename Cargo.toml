@@ -8,7 +8,7 @@ readme = "README.md"
 repository = "https://github.com/yuhr/fncmd"
 categories = ["command-line-interface"]
 keywords = ["cli", "macro", "clap"]
-edition = "2021"
+edition = "2024"
 exclude = [".*", "rust-toolchain", "*.toml", "justfile"]
 
 [lib]

@@ -1,7 +1,7 @@
 <div align="center"><br><br>
 
 <p>Command line interface as a function.</p>
-<h1>fncmd</h1>
+<h1 style="font: 2em 'DM Serif Display', serif">fncmd</h1>
 
 ```rust
 #[fncmd::fncmd] pub fn main() { println!("Hello, World!"); }
@@ -11,19 +11,20 @@
 [![docs.rs](https://img.shields.io/docsrs/fncmd)](https://docs.rs/fncmd/latest/fncmd/)
 [![License](https://img.shields.io/github/license/yuhr/fncmd)](https://github.com/yuhr/fncmd/blob/develop/LICENSE)
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
 <br><br></div>
 
 `fncmd` is an opinionated command line parser frontend that wraps around [`clap`](https://crates.io/crates/clap). The functionality is mostly identical to `clap`, but provides much more automated and integrated experience.
 
 ## Motivation
 
-Imagine a command line program you want to create. Essentially, it can be abstracted as a simple function that takes command line options as arguments. Then there should be nothing to stop you from being able to write it *literally* as a function, without using structs or builders like today's Rustaceans do.
+Imagine a command line program you want to create. Essentially, it can be abstracted as a simple function that takes command line options as arguments. Then there should be nothing to stop you from being able to write it _literally_ as a function, without using structs or builders like today's Rustaceans do.
 
 This concept is tremendously inspired by [`argopt`](https://crates.io/crates/argopt), I really appreciate the work. However, it still requires a bit of cumbersome code, especially for handling subcommands. `fncmd` has been rewritten from scratch to get rid of all the complexities. Dig into [Subcommands](#subcommands) section to see how we can handle it.
 
 ## Installation
-
-**This crate is nightly-only**. Make sure you have set up your toolchain as nightly before using (e.g. having [`rust-toolchain`](https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file) file). You might be interested in [Why nightly](#why-nightly).
 
 To install, run in your project directory:
 
@@ -195,7 +196,3 @@ Changing metadata such as `name` and `version` to different values from the ones
 ### Can't attach `#[fncmd]` to functions other than `main`
 
 Attaching `#[fncmd]` to arbitrary functions can lead to a bloated single file codebase, which should be avoided in general.
-
-## Why nightly
-
-The way it automatically determines which targets are subcommands or not requires the `#[fncmd]` macro itself to know the name of the attached target, and thus the path of the file at which it has been called. This can be achieved by [`Span::source_file`](https://doc.rust-lang.org/proc_macro/struct.Span.html#method.source_file), which is behind an unstable feature flag `proc_macro_span`.

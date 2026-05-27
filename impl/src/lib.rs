@@ -1,5 +1,3 @@
-#![feature(proc_macro_span)]
-
 use darling::FromMeta;
 use proc_macro::{Span, TokenStream};
 use proc_macro_error::proc_macro_error;
