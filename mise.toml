@@ -1,4 +1,4 @@
 [tools]
 "cargo:cargo-release" = "1.1.2"
 just = "1.51.0"
-rust = "1.95.0"
+rust = "1.96.0"
