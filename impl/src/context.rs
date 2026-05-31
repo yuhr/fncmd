@@ -31,7 +31,7 @@ impl Context {
 		&'static self,
 		span: &Span,
 	) -> (&'static Target, &'static Package) {
-		let source_path = span.local_file().unwrap();
+		let source_path = span.file();
 		for &package in self.packages() {
 			for target in &package.targets {
 				if target.src_path.ends_with(&source_path) {
