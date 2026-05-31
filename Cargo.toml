@@ -1,6 +1,6 @@
 [package]
 name = "fncmd"
-version = "2.2.0"
+version = "2.2.1"
 license = "MPL-2.0"
 authors = ["Sʜɪᴍᴜʀᴀ Yū <mail@yuhr.org>"]
 description = "Command line interface as a function."
@@ -19,7 +19,7 @@ members = ["impl"]
 
 [dependencies]
 clap = { version = "4.2.4", features = ["derive"] }
-fncmd-impl = { path = "impl", version = "=2.2.0" }
+fncmd-impl = { path = "impl", version = "=2.2.1" }
 once_cell = "1.17.1"
 
 [dev-dependencies]
